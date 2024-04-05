@@ -13,6 +13,13 @@ app.use((0, cors_1.default)({}));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/api/v1.0', TrackingCoint_routes_1.default);
-app.listen(PORT, function () {
-    console.log("App listening on port ".concat(PORT));
-});
+if (process.env.BUILD_MODE === 'production') {
+    app.listen(process.env.PORT, function () {
+        console.log("Production App listening on port ".concat(process.env.PORT));
+    });
+}
+else {
+    app.listen(PORT, function () {
+        console.log("App listening on port ".concat(PORT));
+    });
+}
