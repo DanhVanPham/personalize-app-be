@@ -12,6 +12,12 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/v1.0', trackingCoinRoutes)
 
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`)
-})
+if (process.env.BUILD_MODE === 'production') {
+  app.listen(process.env.PORT, () => {
+    console.log(`Production App listening on port ${process.env.PORT}`)
+  })
+} else {
+  app.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}`)
+  })
+}
