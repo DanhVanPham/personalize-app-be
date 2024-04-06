@@ -97,13 +97,14 @@ exports.addCoin = addCoin;
 function getCoins(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var status, trackingCoins, symbols, priceSymbols_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    status = req.query.status;
+                    status = ((_a = req.query) === null || _a === void 0 ? void 0 : _a.status) || constants_1.STATUS_COIN.created;
                     return [4 /*yield*/, trackingCoinService.getCoins(Number(status))];
                 case 1:
-                    trackingCoins = _a.sent();
+                    trackingCoins = _b.sent();
                     symbols = trackingCoins === null || trackingCoins === void 0 ? void 0 : trackingCoins.reduce(function (result, currCoin) {
                         if (!result.includes(currCoin.digitalAsset))
                             result.push(currCoin.digitalAsset);
@@ -114,14 +115,14 @@ function getCoins(req, res) {
                             symbols: JSON.stringify(symbols),
                         })];
                 case 2:
-                    priceSymbols_1 = _a.sent();
+                    priceSymbols_1 = _b.sent();
                     if (priceSymbols_1) {
                         trackingCoins = trackingCoins.map(function (coin) {
                             var _a;
                             return (__assign(__assign({}, coin), { currentPrice: ((_a = priceSymbols_1 === null || priceSymbols_1 === void 0 ? void 0 : priceSymbols_1.find(function (item) { return (item === null || item === void 0 ? void 0 : item.symbol) === coin.digitalAsset; })) === null || _a === void 0 ? void 0 : _a.price) || 0 }));
                         });
                     }
-                    _a.label = 3;
+                    _b.label = 3;
                 case 3: return [2 /*return*/, res.json({ status: 200, data: trackingCoins })];
             }
         });

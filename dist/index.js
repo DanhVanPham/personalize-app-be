@@ -14,8 +14,8 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/api/v1.0', TrackingCoint_routes_1.default);
 if (process.env.BUILD_MODE === 'production') {
-    app.listen(process.env.PORT, function () {
-        console.log("Production App listening on port ".concat(process.env.PORT));
+    app.listen(3000, function () {
+        console.log("Production App listening on port ".concat(3000));
     });
 }
 else {

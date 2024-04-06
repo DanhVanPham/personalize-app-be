@@ -15,7 +15,7 @@ export async function addCoin(req: Request, res: Response) {
 }
 
 export async function getCoins(req: Request, res: Response) {
-  const status = req.query.status
+  const status = req.query?.status || STATUS_COIN.created
   let trackingCoins = await trackingCoinService.getCoins(Number(status))
 
   const symbols = trackingCoins?.reduce((result, currCoin) => {
