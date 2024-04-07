@@ -24,6 +24,7 @@
     "typescript": "^5.4.3"
   },
   "dependencies": {
+    "@mathieuc/tradingview": "^3.4.2",
     "@prisma/client": "^5.11.0",
     "axios": "^1.6.8",
     "cors": "^2.8.5",

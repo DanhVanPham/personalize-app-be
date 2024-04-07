@@ -32,6 +32,7 @@ model TrackingCoin {
   digitalAsset String
   detail      String
   img         String?
+  market      String
   quantity    Int
   price       Float
   closedPrice Float?

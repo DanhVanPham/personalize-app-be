@@ -18,16 +18,24 @@ export async function getCoins(req: Request, res: Response) {
   const status = req.query?.status || STATUS_COIN.created
   let trackingCoins = await trackingCoinService.getCoins(Number(status))
 
-  const symbols = trackingCoins?.reduce((result, currCoin) => {
-    if (!result.includes(currCoin.digitalAsset as never))
-      result.push(currCoin.digitalAsset as never)
-    return result
-  }, [])
-
-  if (Number(status) === STATUS_COIN.created) {
-    const priceSymbols = await getMarketPrice({
-      symbols: JSON.stringify(symbols),
-    })
+  if (Number(status) === STATUS_COIN.created && trackingCoins?.length) {
+    const priceSymbols = await Promise.all(
+      trackingCoins.map(async (coin) => {
+        let price = 0
+        try {
+          const response = await getMarketPrice(
+            `${coin.market || 'BINANCE'}:${coin.digitalAsset}`,
+          )
+          price = (response as any)?.price
+        } catch (error) {
+          console.error('Error fetching market prices:', error)
+        }
+        return {
+          symbol: coin.digitalAsset,
+          price,
+        }
+      }),
+    )
 
     if (priceSymbols) {
       trackingCoins = trackingCoins.map((coin) => ({

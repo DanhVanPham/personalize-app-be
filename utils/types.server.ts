@@ -17,6 +17,7 @@ export type TrackingCoinForm = {
   digitalAsset: string
   detail: string
   img?: string | null
+  market: string
   quantity: number
   price: number
   soldAt?: Date | null

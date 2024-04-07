@@ -8,6 +8,7 @@ export async function addCoin(coinData: TrackingCoinForm) {
   const newCoin = await prisma.trackingCoin.create({
     data: {
       digitalAsset: coinData.digitalAsset,
+      market: coinData.market,
       detail: coinData.detail,
       price: coinData.price,
       quantity: coinData.quantity,
@@ -51,10 +52,17 @@ export async function updateCoin(id: string, updateData: TrackingCoinForm) {
     }
 
     if (!coin.closedPrice && updateData?.status === STATUS_COIN.sold) {
-      const priceSymbol = await getMarketPrice({
-        symbol: coin.digitalAsset,
-      })
-      if (priceSymbol) updateData.closedPrice = Number(priceSymbol?.price)
+      let priceSymbol = 0
+
+      try {
+        const response = await getMarketPrice(
+          `${coin.market || 'BINANCE'}:${coin.digitalAsset}`,
+        )
+        priceSymbol = Number((response as any)?.price)
+      } catch (error) {
+        console.log(error)
+      }
+      if (priceSymbol) updateData.closedPrice = priceSymbol
     }
 
     // Update coin data with newData
