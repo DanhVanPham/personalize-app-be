@@ -33,7 +33,7 @@ model TrackingCoin {
   detail      String
   img         String?
   market      String
-  quantity    Int
+  quantity    Float
   price       Float
   closedPrice Float?
   soldAt      DateTime?
