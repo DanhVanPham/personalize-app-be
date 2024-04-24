@@ -20,12 +20,14 @@ export async function getCoins(req: Request, res: Response) {
 	let trackingCoins = await trackingCoinService.getCoins(Number(status));
 	const digitalAssets = trackingCoins?.reduce<DigitalAssets>(
 		(result, trackingCoin) => {
+			const market = trackingCoin.market || "BINANCE";
+			const digitalAsset = trackingCoin.digitalAsset;
 			return {
 				...result,
-				[trackingCoin.digitalAsset]: {
+				[`${market}:${digitalAsset}`]: {
 					price: 0,
-					digitalAsset: trackingCoin.digitalAsset,
-					market: trackingCoin.market || "BINANCE",
+					digitalAsset,
+					market,
 				},
 			};
 		},
@@ -34,18 +36,22 @@ export async function getCoins(req: Request, res: Response) {
 
 	if (Number(status) === STATUS_COIN.created && trackingCoins?.length) {
 		const priceSymbols = await fetchMarketPricesByPatch(
-			Object.keys(digitalAssets),
-			digitalAssets
+			Object.keys(digitalAssets)
 		);
 
 		if (priceSymbols) {
-			trackingCoins = trackingCoins.map((coin) => ({
-				...coin,
-				currentPrice:
-					priceSymbols?.find(
-						(item: any) => item?.symbol === coin.digitalAsset
-					)?.price || 0,
-			}));
+			trackingCoins = trackingCoins.map((coin) => {
+				const market = coin.market || "BINANCE";
+				const digitalAsset = coin.digitalAsset;
+				const symbol = `${market}:${digitalAsset}`;
+				return {
+					...coin,
+					currentPrice:
+						priceSymbols?.find(
+							(item: any) => item?.symbol === symbol
+						)?.price || 0,
+				};
+			});
 		}
 	}
 

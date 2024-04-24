@@ -72,42 +72,35 @@ export async function getMarketPrice(symbol: string, timeframe = "1") {
 	});
 }
 
-export const fetchMarketPrices = async (
-	coins: string[],
-	digitalAssets: DigitalAssets
-) => {
+export const fetchMarketPrices = async (symbols: string[]) => {
 	const prices = [];
-	for (const coin of coins) {
+	for (const symbol of symbols) {
 		let price = 0;
-		const currCoin = digitalAssets[coin];
 		try {
-			const response = await getMarketPrice(`${currCoin.market}:${coin}`);
+			const response = await getMarketPrice(symbol);
 			price = (response as any)?.price;
 			console.log(price);
 		} catch (error) {
 			console.error("Error fetching market prices:", error);
 		}
-		prices.push({ symbol: coin, price });
+		prices.push({ symbol, price });
 	}
 	return prices;
 };
 
-export const fetchMarketPricesByPatch = async (
-	coins: string[],
-	digitalAssets: DigitalAssets
-) => {
+export const fetchMarketPricesByPatch = async (symbols: string[]) => {
 	// Split keys into batches of 4
 	const batchSize = 4;
 	const batches = [];
-	for (let i = 0; i < coins.length; i += batchSize) {
-		batches.push(coins.slice(i, i + batchSize));
+	for (let i = 0; i < symbols.length; i += batchSize) {
+		batches.push(symbols.slice(i, i + batchSize));
 	}
 
 	// Fetch market prices for each batch asynchronously
 	const priceSymbols = [];
 	for (const batch of batches) {
 		try {
-			const prices = await fetchMarketPrices(batch, digitalAssets);
+			const prices = await fetchMarketPrices(batch);
 			priceSymbols.push(...prices);
 		} catch (error) {
 			console.error("Error fetching market prices:", error);
